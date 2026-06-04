@@ -1,24 +1,13 @@
-using System.Reflection;
-using CleanArchitecture.Api.Markers;
-using CleanArchitecture.Application.Markers;
-using CleanArchitecture.Domain.Markers;
-using CleanArchitecture.Infrastructure.Markers;
 using FluentAssertions;
 using NetArchTest.Rules;
 
 namespace CleanArchitecture.ArchitectureTests;
-
 /// <summary>
 /// Architecture tests to enforce Clean Architecture principles
 /// These tests ensure layer dependencies are correct and naming conventions are followed
 /// </summary>
 public class ArchitectureTests
 {
-    private static readonly Assembly DomainAssembly = typeof(IAssemblyMarkerDomain).Assembly;
-    private static readonly Assembly ApplicationAssembly = typeof(IAssemblyMarkerApplication).Assembly;
-    private static readonly Assembly InfrastructureAssembly = typeof(IAssemblyMarkerInfrastructure).Assembly;
-    private static readonly Assembly ApiAssembly = typeof(IAssemblyMarkerApi).Assembly;
-
     #region Layer Dependency Rules
 
     [Fact]
@@ -33,7 +22,7 @@ public class ArchitectureTests
         };
 
         // Act
-        var result = Types.InAssembly(DomainAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Domain)
             .ShouldNot()
             .HaveDependencyOnAny(otherLayers)
             .GetResult();
@@ -54,7 +43,7 @@ public class ArchitectureTests
         };
 
         // Act
-        var result = Types.InAssembly(ApplicationAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Application)
             .ShouldNot()
             .HaveDependencyOnAny(forbiddenLayers)
             .GetResult();
@@ -71,7 +60,7 @@ public class ArchitectureTests
         var forbiddenLayers = new[] { "CleanArchitecture.Api" };
 
         // Act
-        var result = Types.InAssembly(InfrastructureAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Infrastructure)
             .ShouldNot()
             .HaveDependencyOnAny(forbiddenLayers)
             .GetResult();
@@ -89,7 +78,7 @@ public class ArchitectureTests
         // Domain reference is transitive through Application and Infrastructure
 
         // Act - API layer should have references to Application and Infrastructure assemblies
-        var apiReferences = ApiAssembly.GetReferencedAssemblies();
+        var apiReferences = ArchitectureTestAssemblies.Api.GetReferencedAssemblies();
 
         // Assert - Direct references (Domain is transitive)
         apiReferences.Should().Contain(a => a.Name == "CleanArchitecture.Application",
@@ -106,7 +95,7 @@ public class ArchitectureTests
     public void Domain_Entities_ShouldBeSealed()
     {
         // Act
-        var result = Types.InAssembly(DomainAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Domain)
             .That()
             .ResideInNamespace("CleanArchitecture.Domain.Entities")
             .Should()
@@ -122,7 +111,7 @@ public class ArchitectureTests
     public void Domain_Entities_ShouldInheritFromEntity()
     {
         // Act
-        var result = Types.InAssembly(DomainAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Domain)
             .That()
             .ResideInNamespace("CleanArchitecture.Domain.Entities")
             .Should()
@@ -138,7 +127,7 @@ public class ArchitectureTests
     public void Domain_ShouldNotHaveDependencyOnEntityFramework()
     {
         // Act
-        var result = Types.InAssembly(DomainAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Domain)
             .ShouldNot()
             .HaveDependencyOn("Microsoft.EntityFrameworkCore")
             .GetResult();
@@ -146,6 +135,24 @@ public class ArchitectureTests
         // Assert
         result.IsSuccessful.Should().BeTrue(
             "Domain should not depend on Entity Framework");
+    }
+
+    [Fact]
+    public void Domain_RepositoryInterfaces_ShouldResideInRepositoriesNamespace()
+    {
+        // Act
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Domain)
+            .That()
+            .ResideInNamespace("CleanArchitecture.Domain.Repositories")
+            .And()
+            .AreInterfaces()
+            .Should()
+            .HaveNameEndingWith("Repository")
+            .GetResult();
+
+        // Assert
+        result.IsSuccessful.Should().BeTrue(
+            "Domain repository interfaces should reside in CleanArchitecture.Domain.Repositories and end with 'Repository'");
     }
 
     #endregion
@@ -156,7 +163,7 @@ public class ArchitectureTests
     public void Application_Services_ShouldBeSealed()
     {
         // Act
-        var result = Types.InAssembly(ApplicationAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Application)
             .That()
             .ResideInNamespace("CleanArchitecture.Application.Services")
             .And()
@@ -174,7 +181,7 @@ public class ArchitectureTests
     public void Application_Services_ShouldHaveNameEndingWithService()
     {
         // Act
-        var result = Types.InAssembly(ApplicationAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Application)
             .That()
             .ResideInNamespace("CleanArchitecture.Application.Services")
             .And()
@@ -192,7 +199,7 @@ public class ArchitectureTests
     public void Application_Interfaces_ShouldStartWithI()
     {
         // Act
-        var result = Types.InAssembly(ApplicationAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Application)
             .That()
             .ResideInNamespace("CleanArchitecture.Application.Interfaces")
             .And()
@@ -210,7 +217,7 @@ public class ArchitectureTests
     public void Application_ShouldNotHaveDependencyOnEntityFramework()
     {
         // Act
-        var result = Types.InAssembly(ApplicationAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Application)
             .ShouldNot()
             .HaveDependencyOn("Microsoft.EntityFrameworkCore")
             .GetResult();
@@ -228,7 +235,7 @@ public class ArchitectureTests
     public void Infrastructure_Repositories_ShouldBeSealed()
     {
         // Act
-        var result = Types.InAssembly(InfrastructureAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Infrastructure)
             .That()
             .ResideInNamespace("CleanArchitecture.Infrastructure.Repositories")
             .And()
@@ -246,7 +253,7 @@ public class ArchitectureTests
     public void Infrastructure_Repositories_ShouldHaveNameEndingWithRepository()
     {
         // Act
-        var result = Types.InAssembly(InfrastructureAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Infrastructure)
             .That()
             .ResideInNamespace("CleanArchitecture.Infrastructure.Repositories")
             .And()
@@ -264,7 +271,7 @@ public class ArchitectureTests
     public void Infrastructure_Configurations_ShouldBeInternal()
     {
         // Act
-        var result = Types.InAssembly(InfrastructureAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Infrastructure)
             .That()
             .ResideInNamespace("CleanArchitecture.Infrastructure.Data.Configurations")
             .Should()
@@ -280,7 +287,7 @@ public class ArchitectureTests
     public void Infrastructure_Configurations_ShouldBeSealed()
     {
         // Act
-        var result = Types.InAssembly(InfrastructureAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Infrastructure)
             .That()
             .ResideInNamespace("CleanArchitecture.Infrastructure.Data.Configurations")
             .And()
@@ -302,7 +309,7 @@ public class ArchitectureTests
     public void Api_Endpoints_ShouldBeStaticClasses()
     {
         // Act
-        var endpointClasses = Types.InAssembly(ApiAssembly)
+        var endpointClasses = Types.InAssembly(ArchitectureTestAssemblies.Api)
             .That()
             .ResideInNamespace("CleanArchitecture.Api.Endpoints")
             .GetTypes()
@@ -317,7 +324,7 @@ public class ArchitectureTests
     public void Api_Endpoints_ShouldHaveNameEndingWithEndpoints()
     {
         // Act
-        var result = Types.InAssembly(ApiAssembly)
+        var result = Types.InAssembly(ArchitectureTestAssemblies.Api)
             .That()
             .ResideInNamespace("CleanArchitecture.Api.Endpoints")
             .And()
@@ -339,7 +346,13 @@ public class ArchitectureTests
     public void Interfaces_ShouldStartWithI()
     {
         // Act - Check across all assemblies
-        var assemblies = new[] { DomainAssembly, ApplicationAssembly, InfrastructureAssembly, ApiAssembly };
+        var assemblies = new[]
+        {
+            ArchitectureTestAssemblies.Domain,
+            ArchitectureTestAssemblies.Application,
+            ArchitectureTestAssemblies.Infrastructure,
+            ArchitectureTestAssemblies.Api
+        };
 
         foreach (var assembly in assemblies)
         {
@@ -359,7 +372,7 @@ public class ArchitectureTests
     public void Records_ForModels_ShouldHaveAppropriateNames()
     {
         // Act
-        var modelTypes = Types.InAssembly(ApplicationAssembly)
+        var modelTypes = Types.InAssembly(ArchitectureTestAssemblies.Application)
             .That()
             .ResideInNamespace("CleanArchitecture.Application.Models")
             .GetTypes()
@@ -379,7 +392,7 @@ public class ArchitectureTests
     public void Domain_Errors_ShouldBeStaticClasses()
     {
         // Act
-        var errorClasses = Types.InAssembly(DomainAssembly)
+        var errorClasses = Types.InAssembly(ArchitectureTestAssemblies.Domain)
             .That()
             .ResideInNamespace("CleanArchitecture.Domain.Errors")
             .GetTypes()
