@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura,opencover</Format>
+          <Exclude>
+            <!-- Exclude test projects -->
+            [*.Tests]*
+            [*Tests]*
+            
+            <!-- Exclude Program.cs (API entry point) -->
+            [CleanArchitecture.Api]Program
+            
+            <!-- Exclude all Migrations -->
+            [CleanArchitecture.Infrastructure]*Migrations.*
+            [*]*.Migrations.*
+            
+            <!-- Exclude DependencyInjection classes -->
+            [CleanArchitecture.Application]*DependencyInjection*
+            [CleanArchitecture.Infrastructure]*DependencyInjection*
+            [*]*DependencyInjection*
+            
+            <!-- Exclude EF Core configurations -->
+            [CleanArchitecture.Infrastructure]*Configurations.*
+            [*]*.Data.Configurations.*
+            
+            <!-- Exclude marker interfaces -->
+            [*]*Markers.*
+            [CleanArchitecture.Domain]*Markers.*
+            [CleanArchitecture.Application]*Markers.*
+            [CleanArchitecture.Infrastructure]*Markers.*
+            [CleanArchitecture.Api]*Markers.*
+          </Exclude>
+          
+          <ExcludeByFile>
+            <!-- Exclude generated files -->
+            **/*.Designer.cs
+            **/*ModelSnapshot.cs
+            **/Migrations/*.cs
+            
+            <!-- Exclude Program.cs -->
+            **/Program.cs
+            
+            <!-- Exclude DI files -->
+            **/DependencyInjection.cs
+            
+            <!-- Exclude marker files -->
+            **/Markers/*.cs
+            
+            <!-- Exclude build artifacts -->
+            **/obj/**
+            **/bin/**
+            **/Debug/**
+            **/Release/**
+            
+            <!-- Exclude test projects -->
+            **/tests/**
+          </ExcludeByFile>
+          
+          <ExcludeByAttribute>
+            <!-- Exclude items marked with these attributes -->
+            Obsolete
+            GeneratedCodeAttribute
+            CompilerGeneratedAttribute
+            ExcludeFromCodeCoverageAttribute
+          </ExcludeByAttribute>
+          
+          <IncludeDirectory>
+            <!-- Only include src directory -->
+            **/src/**
+          </IncludeDirectory>
+          
+          <Include>
+            <!-- Only include production code assemblies -->
+            [CleanArchitecture.Domain]*
+            [CleanArchitecture.Application]*
+            [CleanArchitecture.Infrastructure]*
+            [CleanArchitecture.Api]*
+          </Include>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+  
+  <RunConfiguration>
+    <!-- Results directory -->
+    <ResultsDirectory>.\TestResults</ResultsDirectory>
+    
+    <!-- Parallel execution -->
+    <MaxCpuCount>0</MaxCpuCount>
+  </RunConfiguration>
+</RunSettings>

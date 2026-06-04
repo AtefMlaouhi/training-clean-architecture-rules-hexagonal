@@ -1,0 +1,56 @@
+<Project>
+    <PropertyGroup>
+        <!-- Common properties for all projects -->
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+
+        <!-- Code Analysis -->
+        <AnalysisMode>All</AnalysisMode>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+        <!-- Version Information -->
+        <Version>1.0.0</Version>
+        <Authors>Atef Mlaouhi</Authors>
+        <Product>CleanArchitecture</Product>
+        <Copyright>Copyright © 2026</Copyright>
+
+        <!-- Package Settings -->
+        <PackageProjectUrl>https://github.com/yourorg/CleanArchitecture</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/yourorg/CleanArchitecture</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+
+        <!-- Build Output -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CA1001;CA1040;CA1062;CA1515;1591;CA1707;CA2007;CA2234</NoWarn> 
+    </PropertyGroup>
+
+    <!-- Central Package Management -->
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    </PropertyGroup>
+
+    <!-- Test Project Settings -->
+    <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+        <IsPackable>false</IsPackable>
+        <IsPublishable>false</IsPublishable>
+        <!-- Exclude test projects from code coverage -->
+        <ExcludeFromCodeCoverage>true</ExcludeFromCodeCoverage>
+    </PropertyGroup>
+
+    <!-- Code Coverage Settings (Coverlet) -->
+    <PropertyGroup>
+        <!-- Exclude patterns for Coverlet -->
+        <CoverletOutputFormat>cobertura,opencover,lcov</CoverletOutputFormat>
+        <CoverletOutput>$(MSBuildProjectDirectory)/TestResults/</CoverletOutput>
+        <ExcludeByFile>
+            **/Migrations/*.cs,**/Program.cs,**/DependencyInjection.cs,**/Markers/*.cs,**/*.Designer.cs,**/*ModelSnapshot.cs</ExcludeByFile>
+        <ExcludeByAttribute>Obsolete,GeneratedCode,CompilerGenerated,ExcludeFromCodeCoverage</ExcludeByAttribute>
+        <Include>
+            [CleanArchitecture.Domain]*,[CleanArchitecture.Application]*,[CleanArchitecture.Infrastructure]*,[CleanArchitecture.Api]*</Include>
+        <Exclude>[*.Tests]*,[*Tests]*</Exclude>
+    </PropertyGroup>
+</Project>

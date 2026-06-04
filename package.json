@@ -1,0 +1,29 @@
+{
+  "name": "clean_architecture",
+  "version": "1.0.0",
+  "description": "This is a NetCore API project template with DDD, CQRS, Mediator, EF Core, Fluent Validation, AutoMapper, Serilog, Swagger, Global Exception Handling, Unit and Integration Tests.",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/...e/clean_architecture.git"
+  },
+  "author": "Atef Mlaouhi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/...e/clean_architecture/issues"
+  },
+  "homepage": "https://github.com/...e/clean_architecture#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^9.1.7",
+    "validate-branch-name": "^1.3.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
+

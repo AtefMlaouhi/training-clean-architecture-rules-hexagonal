@@ -1,0 +1,4 @@
+{
+  "pattern": "^main$|^(feature|fix|hotfix|test|chore|document|refactor|ci)/[a-z0-9-]+$|^release/v[0-9]+.[0-9]+$|^integration/(fix|hotfix)-[a-z0-9-]+-on-main$",
+  "errorMsg": "Your branch name is not compliant. It's possible to rename it using this Git command: `git branch -m <current-name> <new-name>`."
+}
